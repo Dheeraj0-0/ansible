@@ -1,0 +1,17 @@
+---
+
+- name : insatll & start nginx
+  hosts : all
+  become : true
+
+tasks:
+
+  - name : install nginx
+    apt :
+      name : nginx
+      state : present
+
+  - name : start service
+    sevice :
+      name : nginx
+      state : start
