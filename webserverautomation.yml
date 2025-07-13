@@ -1,0 +1,43 @@
+---
+
+- name : install nginx
+  hosts : all
+  become : true
+
+  vars:
+  custom_user : asible_dev
+  html_message : "welcome to my first web server"
+
+  tasks:
+
+    - name : create user
+      user :
+        name : "{{custom_user}}"
+        shell : /bin/bash
+
+
+    - name : install nginx
+      apt:
+        name : nginx
+        state : present
+        update_cache : yes
+
+    - name : ensure nginx is running
+      service :
+        name : nginx
+        state : started
+        enabled : yes
+      
+    - name : create custom HTML page
+      copy :
+        dest : /var/www/html/index.html
+        content : "<h1> {{html_message}} </h1>"
+        owner : www-data
+        group : www-data
+        mode : '0644'
+
+    - name : ensure firewall allow http 
+      ufw:
+        rules : allow
+        port : '80'
+        proto : tcp
